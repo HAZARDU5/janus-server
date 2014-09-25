@@ -5,7 +5,7 @@
 #
 # A test user script for JanusVR server running on local machine on default JanusVR server port.
 #
-# Automatically logs in a user to room eab63d0ea060b828578a4ae044f24d03 called testuser1 and subscribes for events from
+# Automatically logs in a user called testuser1 to room eab63d0ea060b828578a4ae044f24d03 and subscribes for events from
 # server. After doing this it allows interactive mode so any other command can be entered and sent by the developer on
 # behalf of this user.
 #
