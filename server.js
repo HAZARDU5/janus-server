@@ -88,7 +88,7 @@ Server.prototype.startWebServer = function() {
     });
 
     router.get('/', function(req,res){
-        res.send(200, 'Nothing to see here ... yet');
+        res.status(200).send('Nothing to see here ... yet');
     });
 
 
