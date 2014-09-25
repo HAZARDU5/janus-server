@@ -9,6 +9,10 @@
 # server. After doing this it allows interactive mode so any other command can be entered and sent by the developer on
 # behalf of this user.
 #
+# Running this script is useful for automatically logging in a test user after restarting JanusVR server when making
+# code changes as changes aren't applied until the server restarts. Restarting the server currently disconnects all
+# clients connected to it and does not preserve state.
+#
 # @author Michael Andrew (michael@uxvirtual.com)
 #
 
