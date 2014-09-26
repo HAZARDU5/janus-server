@@ -13,8 +13,8 @@ function Session(server, socket) {
 
     this.id = null;
     this.currentRoom = null;
-    this.doNotTrack = false;
     this.lastPosition = null;
+    this.lastGhost = null;
 
 
     byline(socket).on('data', this.parseMessage.bind(this));
@@ -90,12 +90,6 @@ Session.prototype.logon = function(data) {
         return;
     }
 
-    if(data.doNotTrack === undefined) {
-        this.doNotTrack = false;
-    }else{
-        this.doNotTrack = data.doNotTrack;
-    }
-
     //TODO: Auth
 
     if(!this._server.isNameFree(data.userId)) {
@@ -146,10 +140,9 @@ Session.prototype.move = function(position) {
         position: position
     };
 
-    if(!this.doNotTrack){
-        this.lastPosition = position;
-
-    }
+    //TODO: only store coordinate data in lastPosition
+    this.lastPosition = position;
+    //this.lastGhost =
 
     //log.info(JSON.stringify(position));
 
@@ -178,14 +171,12 @@ Session.prototype.roomlist = function(data) {
 
         room._sessions.each(function(s) {
 
-            //Dont echo session data for originiating session or for users with doNotTrack flag set
-            /*if(data.userId === s.id || s.doNotTrack) {
+            //Dont echo session data for originiating session
+            /*if(data.userId === s.id) {
                 return;
             }*/
 
-            users.push({id: s.id, lastPosition: s.lastPosition});
-
-
+            users.push({id: s.id, lastPosition: s.lastPosition, lastGhost: s.lastGhost});
         });
 
         outputData.push({
