@@ -55,7 +55,7 @@ Session.prototype.parseMessage = function(data){
     try {
         payload = JSON.parse(data);
     } catch(e) {
-        this.clientError('Unable to parse last message');
+        this.clientError('Unable to parse last message. Error: '+ e);
         return;
     }
 
@@ -141,11 +141,19 @@ Session.prototype.move = function(position) {
     };
 
     //TODO: only store coordinate data in lastPosition
-    this.lastPosition = position;
-    //TODO: build regular expression to extract ghost information so it can be stored separate from position coordinates
-    //this.lastGhost =
 
-    //log.info(JSON.stringify(position));
+    var coordinates = position.split(/ \. <FireBoxRoom>.*<\/FireBoxRoom>/);
+    coordinates = coordinates[0];
+
+    //log.info('Coordinates: '+coordinates+"\n");
+
+    var ghost = position.split(/(<FireBoxRoom>.*<\/FireBoxRoom>)/);
+    ghost = ghost[1];
+
+    //log.info('Ghost: '+ghost+"\n");
+
+    this.lastPosition = coordinates;
+    this.lastGhost = ghost;
 
     this.currentRoom.emit('user_moved', data);
 };
@@ -161,6 +169,14 @@ Session.prototype.chat = function(message) {
     this.currentRoom.emit('user_chat', data);
 };
 
+/**
+ * Room List
+ *
+ * Get data for a list of rooms. Returns lists of users and their locations in each specified room
+ *
+ * @author Michael Andrew (michael@uxvirtual.com)
+ * @param data Object containing userId of current user and an array of userIds to get room data for
+ */
 Session.prototype.roomlist = function(data) {
 
     var outputData = [];
@@ -176,7 +192,7 @@ Session.prototype.roomlist = function(data) {
             if(data.roomIds[x]){
                 room._sessions.each(function(s) {
 
-                    //Dont echo session data for originiating session
+                    //Dont send back session data for originiating session
                     /*if(data.userId === s.id) {
                      return;
                      }*/
