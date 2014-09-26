@@ -13,6 +13,8 @@ function Session(server, socket) {
 
     this.id = null;
     this.currentRoom = null;
+    this.doNotTrack = false;
+    this.lastPosition = null;
 
 
     byline(socket).on('data', this.parseMessage.bind(this));
@@ -42,7 +44,7 @@ Session.prototype.clientError = function(message) {
     this.send('error', {message:message});
 };
 
-Session.validMethods = ['logon', 'subscribe', 'unsubscribe', 'enter_room', 'move', 'chat', 'portal'];
+Session.validMethods = ['logon', 'subscribe', 'unsubscribe', 'enter_room', 'move', 'chat', 'portal', 'roomlist'];
 
 Session.prototype.parseMessage = function(data){
 
@@ -88,6 +90,12 @@ Session.prototype.logon = function(data) {
         return;
     }
 
+    if(data.doNotTrack === undefined) {
+        this.doNotTrack = false;
+    }else{
+        this.doNotTrack = data.doNotTrack;
+    }
+
     //TODO: Auth
 
     if(!this._server.isNameFree(data.userId)) {
@@ -97,6 +105,7 @@ Session.prototype.logon = function(data) {
 
     this._authed = true;
     this.id = data.userId;
+
 
     log.info('User: ' + this.id + ' signed on');
 
@@ -137,6 +146,13 @@ Session.prototype.move = function(position) {
         position: position
     };
 
+    if(!this.doNotTrack){
+        this.lastPosition = position;
+
+    }
+
+    //log.info(JSON.stringify(position));
+
     this.currentRoom.emit('user_moved', data);
 };
 
@@ -149,6 +165,41 @@ Session.prototype.chat = function(message) {
     };
 
     this.currentRoom.emit('user_chat', data);
+};
+
+Session.prototype.roomlist = function(data) {
+
+    var outputData = [];
+
+    for(var i = 0; i < this._rooms.length; i++){
+
+        var room = this._rooms[i];
+        var users = [];
+
+        room._sessions.each(function(s) {
+
+            //Dont echo session data for originiating session or for users with doNotTrack flag set
+            /*if(data.userId === s.id || s.doNotTrack) {
+                return;
+            }*/
+
+            users.push({id: s.id, lastPosition: s.lastPosition});
+
+
+        });
+
+        outputData.push({
+            id: room.id,
+            users: users
+        })
+
+        //log.info('Room '+room.id+' has user in it with ID: '+s.id);
+
+    }
+
+    //log.info(JSON.stringify(outputData));
+
+    this.send(outputData);
 };
 
 Session.prototype.subscribe = function(data) {
