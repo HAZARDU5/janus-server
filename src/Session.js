@@ -142,6 +142,7 @@ Session.prototype.move = function(position) {
 
     //TODO: only store coordinate data in lastPosition
     this.lastPosition = position;
+    //TODO: build regular expression to extract ghost information so it can be stored separate from position coordinates
     //this.lastGhost =
 
     //log.info(JSON.stringify(position));
@@ -164,25 +165,33 @@ Session.prototype.roomlist = function(data) {
 
     var outputData = [];
 
+
     for(var i = 0; i < this._rooms.length; i++){
 
         var room = this._rooms[i];
         var users = [];
 
-        room._sessions.each(function(s) {
+        //only get rooms that have been specified in roomIds array in data
+        for(var x = 0; x < data.roomIds.length; x++){
+            if(data.roomIds[x]){
+                room._sessions.each(function(s) {
 
-            //Dont echo session data for originiating session
-            /*if(data.userId === s.id) {
-                return;
-            }*/
+                    //Dont echo session data for originiating session
+                    /*if(data.userId === s.id) {
+                     return;
+                     }*/
 
-            users.push({id: s.id, lastPosition: s.lastPosition, lastGhost: s.lastGhost});
-        });
+                    users.push({id: s.id, lastPosition: s.lastPosition, lastGhost: s.lastGhost});
+                });
 
-        outputData.push({
-            id: room.id,
-            users: users
-        })
+                outputData.push({
+                    id: room.id,
+                    users: users
+                })
+            }
+        }
+
+
 
         //log.info('Room '+room.id+' has user in it with ID: '+s.id);
 
