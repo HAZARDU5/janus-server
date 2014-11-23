@@ -1,6 +1,6 @@
 
 var byline = require('byline');
-
+var User = require('../src/models/User');
 
 function Session(server, socket) {
 
@@ -147,6 +147,56 @@ Session.prototype.chat = function(message) {
         userId: this.id,
         message: message
     };
+
+    log.info(this.id+': '+message);
+
+    //commander.parse(message);
+
+    //log.info(commander.register);
+
+
+    function parseCommand(string){
+
+
+        var register = message.match(/(\/register)?\s+([^\s]+)*/);
+
+        if(register === null){
+            register = message.match(/\/register/);
+            //log.info(register);
+
+            if(register !== null){
+                return {success: false, command:'register', value:'', message:'Usage: /register <userid>'}
+            }
+
+            //
+            //
+        }else{
+            if(typeof register[2] != 'undefined'){
+                return {success: true, command:'register', value: register[2]}
+            }else{
+                return {success: false, command:'register', value: ''}
+            }
+
+        }
+
+        return {success: false, message: 'No command detected.'};
+    }
+
+    var parsedCommand = parseCommand(message);
+
+    log.info(parsedCommand);
+
+
+    switch(parsedCommand.command){
+        case 'register':
+            var user = new User(parsedCommand.value);
+            break;
+    }
+
+    //if(commander.register){
+    //    log.info('Registering userid: '+commander.register);
+    //}
+
 
     this.currentRoom.emit('user_chat', data);
 };

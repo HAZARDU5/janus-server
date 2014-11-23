@@ -13,6 +13,8 @@ var Session = require('./src/Session');
 var Room = require('./src/Room');
 
 
+
+
 function Server() {
 
     this._sessions = new sets.Set();
@@ -50,7 +52,7 @@ Server.prototype.start = function() {
             process.exit(1);
         }
 
-        log.info('Server listening');
+        log.info('Server listening on port: '+config.port);
 
     });
 
@@ -64,7 +66,7 @@ Server.prototype.start = function() {
                 process.exit(1);
             }
 
-            log.info('Server listening (SSL)');
+            log.info('Server listening (SSL) on port: '+config.ssl.port);
 
         });
     }
