@@ -1,5 +1,16 @@
-node_modules
+!node_modules/
+
+node_modules/*
+!node_modules/sequelize-cli/
+
+node_modules/sequelize-cli/*
+!node_modules/sequelize-cli/bin/
+
+node_modules/sequelize-cli/bin/*
+!node_modules/sequelize-cli/bin/migrations/
 
 /server-cert.pem
 
 /server-key.pem
+
+

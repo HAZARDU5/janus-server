@@ -18,4 +18,39 @@ dependencies listed in `package.json`.
 `yourcomputer.local`. On OSX you can see your computer's Bonjour name by going to System Preferences -> Sharing and
 looking under the Computer Name field.
 
-6) When asked to provide a challenge password while generating the SSL certificate press enter to skip setting a password. 
+6) When asked to provide a challenge password while generating the SSL certificate press enter to skip setting a password.
+
+7. From the root of the repository `cd` to `node_modules/sequelize-cli/bin`. Run `./sequelize init` to initialize the
+ORM library for connecting to the database. Adjust the generated config file at
+`node_modules/sequelize-cli/bin/config/config.json` with your desired configuration. Note that the `development`
+environment is the default environment if not specified otherwise. You may need to set the `port` and `dialectOptions`
+as follows to get the config to work with MAMP on OSX as the path to the MySQL socket is in a non-standard location
+when running MAMP:
+
+```
+"development": {
+        "username": "janusvr",
+        "password": "PASSWORD_HERE",
+        "database": "janusvr_development",
+        "host": "127.0.0.1",
+        "dialect": "mysql",
+        "port": 3306,
+        "dialectOptions": {
+            "socketPath": "/Applications/MAMP/tmp/mysql/mysql.sock",
+            "supportBigNumbers": true,
+            "bigNumberStrings": true
+        }
+    },
+```
+
+8. Run `./sequelize db:migrate` to run the initial database migration.
+
+
+
+
+Adding Database Migrations
+--------------------------
+
+1. `cd` to the `node_modules/sequelize-cli/bin` folder and run `sequelize migration:create --name MIGRATION_NAME`
+where `MIGRATION_NAME` is the name of the migration you wish to create. A new JS file will be created in the migrations
+folder which you can edit to change the database structure.

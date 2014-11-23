@@ -15,6 +15,9 @@
     "npmlog": "^0.1.1",
     "optimist": "^0.6.1",
     "simplesets": "^1.2.0",
-    "commander": "^2.5.0"
+    "sequelize": "^2.0.0",
+    "sequelize-cli": "^0.0.4",
+    "mysql": "^2.5.3"
+
   }
 }

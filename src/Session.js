@@ -1,6 +1,7 @@
 
 var byline = require('byline');
 var User = require('../src/models/User');
+var Sequelize = require('sequelize');
 
 function Session(server, socket) {
 
