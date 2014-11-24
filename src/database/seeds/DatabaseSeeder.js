@@ -4,7 +4,7 @@ var genericHelper = require('sequelize-cli/lib/helpers/generic-helper');
 var envConfig = config[genericHelper.getEnvironment()];
 
 var events = require('events');
-var ERROR = require('../../events/ERROR');
+var ErrorEvent = require('../../events/ErrorEvent');
 
 /**
  * DatabaseSeeder
@@ -24,7 +24,7 @@ DatabaseSeeder.prototype.run = function() {
     //create admin user
     var auth = new Auth();
 
-    auth.on(ERROR.UserExists,function(e){
+    auth.on(ErrorEvent.userExists,function(e){
         console.log(e.message);
         console.log('Did not insert admin user.');
     });

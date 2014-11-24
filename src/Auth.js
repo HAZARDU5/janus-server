@@ -5,7 +5,7 @@ var database = new Database();
 var sequelize = database.connect();
 
 var events = require('events');
-var ERROR = require('./events/ERROR');
+var ErrorEvent = require('./events/ErrorEvent');
 
 //console.log(sequelizeHelpers.config);
 
@@ -33,10 +33,10 @@ Auth.prototype.register = function(username,password,email) {
     var self = this;
 
     User.find({ where: {username: username} }).then(function(user){
-        var error = new ERROR();
+        var errorEvent = new ErrorEvent();
         //user already exist - throw error event
         if(user){
-            self.emit(ERROR.UserExists,error.UserExists);
+            self.emit(ErrorEvent.userExists,errorEvent.userExists);
         }else{
             User.create({username: username, password: hash, email: email, enabled: 1});
         }
