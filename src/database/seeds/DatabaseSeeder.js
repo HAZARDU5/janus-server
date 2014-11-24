@@ -32,7 +32,7 @@ DatabaseSeeder.prototype.run = function() {
 
     //create admin user
     var auth = new Auth();
-    auth.register('admin','admin','admin@janusvr.com');
+    auth.register('admin',envConfig.defaultAdminPass,'admin@janusvr.com');
 };
 
 var databaseSeeder = new DatabaseSeeder();
