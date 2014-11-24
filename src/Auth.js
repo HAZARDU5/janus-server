@@ -1,21 +1,11 @@
 //var sequelizeCLIHelpers = new SequelizeCLIHelpers(exports);
-
-var config = require('sequelize-cli/bin/config/config.json');
-var genericHelper = require('sequelize-cli/lib/helpers/generic-helper');
-var envConfig = config[genericHelper.getEnvironment()];
-
-var Sequelize = require('sequelize');
-var sequelize = new Sequelize(envConfig.database,
-    envConfig.username,
-    envConfig.password,
-    {
-        host: envConfig.host,
-        dialect: envConfig.dialect,
-        dialectOptions: envConfig.dialectOptions,
-        port: envConfig.port
-    })
-
 var bcrypt = require('bcrypt');
+var Database = require('./database/Database');
+var database = new Database();
+var sequelize = database.connect();
+
+var events = require('events');
+var ERROR = require('./events/ERROR');
 
 //console.log(sequelizeHelpers.config);
 
@@ -25,10 +15,14 @@ var User = sequelize.import(__dirname+"/models/User");
 
 function Auth() {
 
-    var self = this;
+
+    events.EventEmitter.call(this);
 }
 
 module.exports = Auth;
+
+//allow the class to emit events
+Auth.prototype.__proto__ = events.EventEmitter.prototype;
 
 Auth.prototype.register = function(username,password,email) {
     //encrypt password synchronously
@@ -36,24 +30,20 @@ Auth.prototype.register = function(username,password,email) {
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
 
+    var self = this;
+
+    User.find({ where: {username: username} }).then(function(user){
+        var error = new ERROR();
+        //user already exist - throw error event
+        if(user){
+            self.emit(ERROR.UserExists,error.UserExists);
+        }else{
+            User.create({username: username, password: hash, email: email, enabled: 1});
+        }
+
+    });
 
 
-
-
-    User.create({username: username, password: hash, email: email});
-
-    //
-
-
-    //User.findOrCreate({ where: {username: {eq: username}}, defaults: { password: hash, email: email } });
-    /*.spread(function(user, wasCreated) {
-            log.info(user.values);
-            log.info(wasCreated);
-
-
-
-            //return PromiseChain
-        });*/
 };
 
 Auth.prototype.login = function() {

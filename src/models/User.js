@@ -1,29 +1,11 @@
-var config = require('sequelize-cli/bin/config/config.json');
-var genericHelper = require('sequelize-cli/lib/helpers/generic-helper');
-var envConfig = config[genericHelper.getEnvironment()];
-
+var Database = require('../database/Database');
+var database = new Database();
+var sequelize = database.connect();
 var Sequelize = require('sequelize');
-var sequelize = new Sequelize(envConfig.database,
-    envConfig.username,
-    envConfig.password,
-    {
-        host: envConfig.host,
-        dialect: envConfig.dialect,
-        dialectOptions: envConfig.dialectOptions,
-        port: envConfig.port
-    })
-
-
-
-
 
 //console.log(genericHelper);
 
-
-
-
-
-sequelize.authenticate()
+/*sequelize.authenticate()
     .complete(function(err) {
         if (!!err) {
             console.log('Unable to connect to the database:', err)
@@ -32,7 +14,7 @@ sequelize.authenticate()
 
 
         }
-    });
+    });*/
 
 var User = sequelize.define('User', {
 

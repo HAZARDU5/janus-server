@@ -27,22 +27,22 @@ environment is the default environment if not specified otherwise. You may need 
 as follows to get the config to work with MAMP on OSX as the path to the MySQL socket is in a non-standard location
 when running MAMP:
 
-```
-"development": {
-        "username": "janusvr",
-        "password": "PASSWORD_HERE",
-        "database": "janusvr_development",
-        "host": "127.0.0.1",
-        "dialect": "mysql",
-        "port": 3306,
-        "dialectOptions": {
-            "socketPath": "/Applications/MAMP/tmp/mysql/mysql.sock",
-            "supportBigNumbers": true,
-            "bigNumberStrings": true
-        }
-        "defaultAdminPass": "PASSWORD_HERE"
-    },
-```
+    ```
+    "development": {
+            "username": "janusvr",
+            "password": "PASSWORD_HERE",
+            "database": "janusvr_development",
+            "host": "127.0.0.1",
+            "dialect": "mysql",
+            "port": 3306,
+            "dialectOptions": {
+                "socketPath": "/Applications/MAMP/tmp/mysql/mysql.sock",
+                "supportBigNumbers": true,
+                "bigNumberStrings": true
+            }
+            "defaultAdminPass": "PASSWORD_HERE"
+        },
+    ```
 
 8. Change `PASSWORD_HERE` in `defaultAdminPass` to a secure password.
 
