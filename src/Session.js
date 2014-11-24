@@ -1,7 +1,6 @@
 
 var byline = require('byline');
-var User = require('../src/models/User');
-var Sequelize = require('sequelize');
+var Auth = require('./src/Auth');
 
 function Session(server, socket) {
 
@@ -159,23 +158,23 @@ Session.prototype.chat = function(message) {
     function parseCommand(string){
 
 
-        var register = message.match(/(\/register)?\s+([^\s]+)*/);
+        var match = message.match(/(#register)?\s+([^\s]+)*/);
 
-        if(register === null){
-            register = message.match(/\/register/);
+        if(match === null){
+            match = message.match(/#register/);
             //log.info(register);
 
-            if(register !== null){
-                return {success: false, command:'register', value:'', message:'Usage: /register <userid>'}
+            if(match !== null){
+                return {success: false, command:'register', data:{}, message:'Usage: /register <userid> <password>'}
             }
 
             //
             //
         }else{
-            if(typeof register[2] != 'undefined'){
-                return {success: true, command:'register', value: register[2]}
+            if(typeof match[2] != 'undefined'){
+                return {success: true, command:'register', data: {username: match[2], password: match[3] } }
             }else{
-                return {success: false, command:'register', value: ''}
+                return {success: false, command:'register', data: {}}
             }
 
         }
@@ -190,7 +189,11 @@ Session.prototype.chat = function(message) {
 
     switch(parsedCommand.command){
         case 'register':
-            var user = new User(parsedCommand.value);
+
+            auth.register(parsedCommand.data.username,parsedCommand.data.password,parsedCommand.data.email);
+
+
+            //var user = new User(parsedCommand.value);
             break;
     }
 
