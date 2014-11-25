@@ -6,7 +6,6 @@ var Sequelize = require('sequelize');
 
 function Database() {
 
-    var self = this;
 }
 
 module.exports = Database;

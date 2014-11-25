@@ -5,18 +5,9 @@ var Sequelize = require('sequelize');
 
 //note: don't refer to other models from within the model - this causes issues with Sequelize
 
-var User = sequelize.define('User', {
+var Group = sequelize.define('Group', {
 
-    //id: { type: Sequelize.INTEGER },
-    firstName: { type: Sequelize.STRING },
-    lastName: { type: Sequelize.STRING },
-    username: { type: Sequelize.STRING },
-    password: { type: Sequelize.STRING },
-    email: {
-        type: Sequelize.STRING,
-        validate: { min: 0 }
-    },
-    ip: { type: Sequelize.STRING },
+    name: { type: Sequelize.STRING },
     enabled: { type: Sequelize.BOOLEAN }
 
 },{
@@ -28,9 +19,6 @@ var User = sequelize.define('User', {
     // timestamps are enabled
     paranoid: false,
 
-    // list of associations to eager load
-    //include: [Group],
-
     // don't use camelcase for automatically added attributes but underscore style
     // so updatedAt will be updated_at
     underscored: false,
@@ -41,7 +29,7 @@ var User = sequelize.define('User', {
     freezeTableName: false,
 
     // define the table's name
-    tableName: 'users',
+    tableName: 'groups',
 
     validate: {
         //custom validators go here
@@ -49,11 +37,5 @@ var User = sequelize.define('User', {
 });
 
 module.exports = function(sequelize, DataTypes) {
-
-    //associations with other models are defined here. note the seperate model for the join table representing the
-    //relationship. The foreignKey also needs to be defined or it will revert to using the `UserId` column for the
-    //join table
-
-
-    return User;
+    return Group;
 }
