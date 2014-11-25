@@ -190,7 +190,7 @@ Session.prototype.chat = function(message) {
     switch(parsedCommand.command){
         case 'register':
 
-            auth.register(parsedCommand.data.username,parsedCommand.data.password,parsedCommand.data.email);
+            auth.addUser(parsedCommand.data.username,parsedCommand.data.password,parsedCommand.data.email);
 
 
             //var user = new User(parsedCommand.value);

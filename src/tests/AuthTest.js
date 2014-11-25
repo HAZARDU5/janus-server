@@ -31,7 +31,13 @@ function AuthTest() {
 
 AuthTest.prototype.run = function() {
 
+
+
+    this.addUser();
+
     this.selectUser();
+
+    this.removeUser();
 };
 
 AuthTest.prototype.selectUser = function() {
@@ -41,13 +47,38 @@ AuthTest.prototype.selectUser = function() {
     User.hasMany(Group,{through:GroupUser});
     Group.hasMany(User,{through:GroupUser});
 
-    User.findOne({id:1, include: [Group]}).then(function(user){
-        console.log('\n'+'User data: '+'\n');
-        console.log(JSON.stringify(user)) ;
+    User.findOne({username:'test', include: [Group]}).then(function(user){
 
-        console.log('\n'+'User groups: '+'\n');
-        console.log(JSON.stringify(user.Groups)) ;
+        if(user == null){
+            console.log('\n'+'User not found. '+'\n');
+        }else{
+            console.log('\n'+'User data: '+'\n');
+            console.log(JSON.stringify(user)) ;
+
+            if(typeof user.Groups != 'undefined'){
+                console.log('\n'+'User groups: '+'\n');
+                console.log(JSON.stringify(user.Groups)) ;
+            }else{
+                console.log('\n'+'User belongs to no groups: '+'\n');
+            }
+        }
     });
+}
+
+AuthTest.prototype.addUser = function() {
+    console.log('\n'+'Adding user...'+'\n');
+
+    var auth = new Auth();
+
+    auth.addUser('test', 'test', 'michael@uxvirtual.com', ['user']);
+}
+
+AuthTest.prototype.removeUser = function() {
+    console.log('\n'+'Removing user...'+'\n');
+
+    var auth = new Auth();
+
+    auth.removeUser('test');
 }
 
 var authTest = new AuthTest();
