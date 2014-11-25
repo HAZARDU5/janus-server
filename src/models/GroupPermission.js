@@ -5,10 +5,10 @@ var Sequelize = require('sequelize');
 
 //note: don't refer to other models from within the model - this causes issues with Sequelize
 
-var GroupUsers = sequelize.define('GroupUsers', {
+var GroupPermission = sequelize.define('GroupPermission', {
 
-    userId: { type: Sequelize.INTEGER },
-    groupId: { type: Sequelize.INTEGER }
+    groupId: { type: Sequelize.INTEGER },
+    permissionId: { type: Sequelize.INTEGER }
 
 },{
     // add the timestamp attributes (updatedAt, createdAt)
@@ -32,7 +32,7 @@ var GroupUsers = sequelize.define('GroupUsers', {
     freezeTableName: false,
 
     // define the table's name
-    tableName: 'groupsUsers',
+    tableName: 'groupsPermissions',
 
     validate: {
         //custom validators go here
@@ -42,5 +42,5 @@ var GroupUsers = sequelize.define('GroupUsers', {
 
 
 module.exports = function(sequelize, DataTypes) {
-    return GroupUsers;
+    return GroupPermission;
 }

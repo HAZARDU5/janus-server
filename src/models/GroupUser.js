@@ -5,12 +5,10 @@ var Sequelize = require('sequelize');
 
 //note: don't refer to other models from within the model - this causes issues with Sequelize
 
-var Group = sequelize.define('Group', {
+var GroupUser = sequelize.define('GroupUser', {
 
-    name: { type: Sequelize.STRING },
-    description: { type: Sequelize.STRING },
-    enabled: { type: Sequelize.BOOLEAN },
-    level: { type: Sequelize.INTEGER }
+    userId: { type: Sequelize.INTEGER },
+    groupId: { type: Sequelize.INTEGER }
 
 },{
     // add the timestamp attributes (updatedAt, createdAt)
@@ -20,6 +18,9 @@ var Group = sequelize.define('Group', {
     // to the current date (when deletion was done). paranoid will only work if
     // timestamps are enabled
     paranoid: false,
+
+    // list of associations to eager load
+    //include: [Group],
 
     // don't use camelcase for automatically added attributes but underscore style
     // so updatedAt will be updated_at
@@ -31,13 +32,15 @@ var Group = sequelize.define('Group', {
     freezeTableName: false,
 
     // define the table's name
-    tableName: 'groups',
+    tableName: 'groupsUsers',
 
     validate: {
         //custom validators go here
     }
 });
 
+
+
 module.exports = function(sequelize, DataTypes) {
-    return Group;
+    return GroupUser;
 }
