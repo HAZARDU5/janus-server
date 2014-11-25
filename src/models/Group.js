@@ -4,6 +4,8 @@ var sequelize = database.connect();
 var Sequelize = require('sequelize');
 
 //note: don't refer to other models from within the model - this causes issues with Sequelize
+//eager loading relationships using `include` option from within model won't work - must be performed when selecting
+//groups using ORM
 
 var Group = sequelize.define('Group', {
 

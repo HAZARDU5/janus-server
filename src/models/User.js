@@ -4,6 +4,8 @@ var sequelize = database.connect();
 var Sequelize = require('sequelize');
 
 //note: don't refer to other models from within the model - this causes issues with Sequelize
+//eager loading relationships using `include` option from within model won't work - must be performed when selecting
+//users using ORM
 
 var User = sequelize.define('User', {
 
@@ -27,9 +29,6 @@ var User = sequelize.define('User', {
     // to the current date (when deletion was done). paranoid will only work if
     // timestamps are enabled
     paranoid: false,
-
-    // list of associations to eager load
-    //include: [Group],
 
     // don't use camelcase for automatically added attributes but underscore style
     // so updatedAt will be updated_at
