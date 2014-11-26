@@ -1,9 +1,14 @@
-var ErrorEvent = {
-    userExists: {
+function ErrorEvent() {
+    this.userExists = {
         message: 'User already exists.'
-    },
-    userNotExists: {
+    }
+
+    this.userNotExists = {
         message: 'User does not exist.'
+    }
+
+    this.userPasswordInvalid = {
+        message: 'User password is invalid.'
     }
 }
 

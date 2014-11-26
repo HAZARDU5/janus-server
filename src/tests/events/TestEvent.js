@@ -1,12 +1,19 @@
-var TestEvent = {
-    userAdded: {
+function TestEvent() {
+    this.userAdded = {
         message: 'Test user added.'
-    },
-    userRemoved: {
+    }
+
+    this.userRemoved = {
         message: 'Test user removed.'
-    },
-    userSelected: {
-        message: 'Test user selected.'
+    }
+
+    this.userSelected = {
+        message: 'Test user selected.',
+        data: {}
+    }
+
+    this.userLoggedIn = {
+        message: 'Test user logged in.'
     }
 }
 

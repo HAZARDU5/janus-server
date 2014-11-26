@@ -1,20 +1,29 @@
-var AuthEvent = {
-    userAdded: {
+function AuthEvent() {
+    this.userAdded = {
         message: 'User added.'
-    },
-    userRemoved: {
+    }
+
+    this.userRemoved = {
         message: 'User removed.'
-    },
-    userAddedGroup: {
+    }
+
+    this.userAuthenticated = {
+        message: 'User successfully authenticated.'
+    }
+
+    this.userAddedGroup = {
         message: 'User added to group.'
-    },
-    groupAddedPermission: {
+    }
+
+    this.groupAddedPermission = {
         message: 'Permission added to group.'
-    },
-    groupAddedPermissions: {
+    }
+
+    this.groupAddedPermissions = {
         message: 'Permissions added to group.'
-    },
-    userRemovedAllGroups: {
+    }
+
+    this.userRemovedAllGroups = {
         message: 'Removed user from all groups.'
     }
 }

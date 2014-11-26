@@ -68,8 +68,9 @@ DatabaseSeeder.prototype.run = function() {
 
                                 auth.once(ErrorEvent.userExists,function(e){
                                     log.info(e.message);
-                                    log.info('Did not insert admin user.');
+                                    log.info('Did not insert admin user - already exists.');
                                 });
+
                                 auth.once(AuthEvent.userAdded,function(e){
                                     log.info(e.message);
 
@@ -79,6 +80,7 @@ DatabaseSeeder.prototype.run = function() {
                                     });
                                     auth.addPermissions('admin',['allow_user_ban','allow_user_edit','allow_reset_room']);
                                 });
+
                                 auth.addUser('admin',envConfig.defaultAdminPass,'admin@janusvr.com',['admin']);
                             });
                     });

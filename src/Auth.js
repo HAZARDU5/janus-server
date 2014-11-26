@@ -33,9 +33,13 @@ Auth.prototype.addUser = function(username,password,email,groups) {
     var self = this;
 
     User.find({ where: {username: username} }).then(function(user){
+
+        var errorEvent = new ErrorEvent();
+        var authEvent = new AuthEvent();
+
         //user already exist - throw error event
         if(user){
-            self.emit(ErrorEvent.userExists,ErrorEvent.userExists);
+            self.emit(ErrorEvent.userExists,errorEvent.userExists);
         }else{
             User.create({username: username, password: hash, email: email, enabled: 1}).then(function(user){
                 log.info('Created user: '+user.username);
@@ -46,7 +50,7 @@ Auth.prototype.addUser = function(username,password,email,groups) {
                         self.once(AuthEvent.userAddedGroup,function(e){
                             if(groupAddedCount == groups.length-1){
                                 //successfully created the user and added it to specified groups
-                                self.emit(AuthEvent.userAdded,AuthEvent.userAdded);
+                                self.emit(AuthEvent.userAdded,authEvent.userAdded);
                             }
                         });
                         self.addToGroup(user,group);
@@ -64,15 +68,16 @@ Auth.prototype.addUser = function(username,password,email,groups) {
 Auth.prototype.removeUser = function(username) {
     var self = this;
 
-
-
     User.find({ where: {username: username} }).then(function(user){
         //user does not exist - throw error event
 
-        console.log(user);
+        var errorEvent = new ErrorEvent();
+        var authEvent = new AuthEvent();
+
+        //console.log(user);
 
         if(user == null){
-            self.emit(ErrorEvent.userNotExists,ErrorEvent.userNotExists);
+            self.emit(ErrorEvent.userNotExists,errorEvent.userNotExists);
         }else{
 
             self.once(AuthEvent.userRemovedAllGroups,function(e){
@@ -82,7 +87,7 @@ Auth.prototype.removeUser = function(username) {
                 user.destroy().then(function(user){
                     log.info('Deleted user: '+user.username);
 
-                    self.emit(AuthEvent.userRemoved,AuthEvent.userRemoved);
+                    self.emit(AuthEvent.userRemoved,authEvent.userRemoved);
                 });
             });
 
@@ -93,12 +98,28 @@ Auth.prototype.removeUser = function(username) {
     });
 }
 
-Auth.prototype.login = function() {
+Auth.prototype.authenticate = function(username,password) {
+    var self = this;
 
-}
+    var errorEvent = new ErrorEvent();
+    var authEvent = new AuthEvent();
 
-Auth.prototype.logout = function() {
+    //get user
+    User.find({ where: {username: username} }).then(function(user){
 
+        if(user == null){
+            self.emit(ErrorEvent.userNotExists,errorEvent.userNotExists);
+        }else{
+            //check password is correct
+            bcrypt.compare(password, user.password, function(err, res) {
+                if(res){
+                    self.emit(AuthEvent.userAuthenticated,authEvent.userAuthenticated);
+                }else{
+                    self.emit(ErrorEvent.userPasswordInvalid,errorEvent.userPasswordInvalid);
+                }
+            });
+        }
+    });
 }
 
 Auth.prototype.resetPassword = function() {
@@ -111,13 +132,13 @@ Auth.prototype.removeFromAllGroups = function(user){
     User.hasMany(Group,{foreignKey: 'userId', through:GroupUser});
     Group.hasMany(User,{foreignKey: 'groupId', through:GroupUser});
 
+    var authEvent = new AuthEvent();
+
     var self = this;
 
     user.setGroups([]).then(function(){
-        self.emit(AuthEvent.userRemovedAllGroups,AuthEvent.userRemovedAllGroups);
+        self.emit(AuthEvent.userRemovedAllGroups,authEvent.userRemovedAllGroups);
     });
-
-
 }
 
 Auth.prototype.addToGroup = function(user,group) {
@@ -126,13 +147,15 @@ Auth.prototype.addToGroup = function(user,group) {
     User.hasMany(Group,{foreignKey: 'userId', through:GroupUser});
     Group.hasMany(User,{foreignKey: 'groupId', through:GroupUser});
 
+    var authEvent = new AuthEvent();
+
     var self = this;
 
     //since the relationship of users to groups is defined above, we can now access the `addGroup()` method of the user
     //model
     user.addGroup(group).then(function(){
      log.info('User added to group: '+group.description);
-        self.emit(AuthEvent.userAddedGroup,AuthEvent.userAddedGroup);
+        self.emit(AuthEvent.userAddedGroup,authEvent.userAddedGroup);
      });
 }
 
@@ -144,6 +167,8 @@ Auth.prototype.addPermissions = function(groupName,permissionsNames) {
     Group.hasMany(Permission,{foreignKey:'groupId',through:GroupPermission});
     Permission.hasMany(Group,{foreignKey:'permissionId',through:GroupPermission});
 
+    var authEvent = new AuthEvent();
+
     var self = this;
 
     Group.find({name:groupName}).then(function(group){
@@ -153,7 +178,7 @@ Auth.prototype.addPermissions = function(groupName,permissionsNames) {
         }).then(function(permissions){
 
             group.addPermissions(permissions).then(function(){
-                self.emit(AuthEvent.groupAddedPermissions,AuthEvent.groupAddedPermissions);
+                self.emit(AuthEvent.groupAddedPermissions,authEvent.groupAddedPermissions);
             });
         });
     });

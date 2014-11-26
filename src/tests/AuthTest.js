@@ -43,11 +43,19 @@ AuthTest.prototype.run = function() {
         self.once(TestEvent.userSelected,function(e){
             console.log(e.message);
 
-            self.once(TestEvent.userRemoved,function(e){
+            self.once(TestEvent.userLoggedIn,function(e){
                 console.log(e.message);
+
+                self.once(TestEvent.userRemoved,function(e){
+                    console.log(e.message);
+                });
+
+                self.removeUser();
             });
 
-            self.removeUser();
+            self.loginUser();
+
+
 
         });
 
@@ -63,6 +71,23 @@ AuthTest.prototype.run = function() {
 
 };
 
+AuthTest.prototype.loginUser = function() {
+    console.log('\n'+'Logging in user...'+'\n');
+
+    var auth = new Auth();
+    var self = this;
+    var testEvent = new TestEvent();
+
+    auth.once(AuthEvent.userAuthenticated,function(e){
+        console.log(e.message);
+
+        self.emit(TestEvent.userLoggedIn,testEvent.userLoggedIn);
+
+    });
+
+    auth.authenticate('test','test');
+}
+
 AuthTest.prototype.selectUser = function() {
     console.log('\n'+'Selecting user...'+'\n');
 
@@ -71,6 +96,7 @@ AuthTest.prototype.selectUser = function() {
     Group.hasMany(User,{through:GroupUser});
 
     var self = this;
+    var testEvent = new TestEvent();
 
     User.findOne({username:'test', include: [Group]}).then(function(user){
 
@@ -87,7 +113,9 @@ AuthTest.prototype.selectUser = function() {
                 console.log('\n'+'User belongs to no groups: '+'\n');
             }
 
-            self.emit(TestEvent.userSelected,TestEvent.userSelected);
+            testEvent.userSelected.data = user;
+
+            self.emit(TestEvent.userSelected,testEvent.userSelected);
         }
     });
 }
@@ -97,10 +125,11 @@ AuthTest.prototype.addUser = function() {
 
     var auth = new Auth();
     var self = this;
+    var testEvent = new TestEvent();
 
     auth.once(AuthEvent.userAdded,function(e){
         console.log(e);
-        self.emit(TestEvent.userAdded,TestEvent.userAdded);
+        self.emit(TestEvent.userAdded,testEvent.userAdded);
     });
 
     auth.addUser('test', 'test', 'michael@uxvirtual.com', ['user']);
@@ -111,10 +140,11 @@ AuthTest.prototype.removeUser = function() {
 
     var auth = new Auth();
     var self = this;
+    var testEvent = new TestEvent();
 
     auth.once(AuthEvent.userRemoved,function(e){
         console.log(e);
-        self.emit(TestEvent.userRemoved,TestEvent.userRemoved);
+        self.emit(TestEvent.userRemoved,testEvent.userRemoved);
     });
 
     auth.removeUser('test');
