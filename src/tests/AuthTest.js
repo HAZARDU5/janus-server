@@ -1,7 +1,5 @@
 var Auth = require('../Auth');
 var config = require('sequelize-cli/bin/config/config.json');
-var genericHelper = require('sequelize-cli/lib/helpers/generic-helper');
-var envConfig = config[genericHelper.getEnvironment()];
 
 var events = require('events');
 var TestEvent = require('./events/TestEvent');

@@ -14,10 +14,6 @@ var Permission = sequelize.import(__dirname+"/models/Permission");
 var GroupPermission = sequelize.import(__dirname+"/models/GroupPermission");
 var GroupUser = sequelize.import(__dirname+"/models/GroupUser");
 
-
-
-//sequelize.sync();
-
 function Auth() {
 
     events.EventEmitter.call(this);
@@ -37,8 +33,6 @@ Auth.prototype.addUser = function(username,password,email,groups) {
     var self = this;
 
     User.find({ where: {username: username} }).then(function(user){
-        //var errorEvent = new ErrorEvent();
-        //var authEvent = new AuthEvent();
         //user already exist - throw error event
         if(user){
             self.emit(ErrorEvent.userExists,ErrorEvent.userExists);
@@ -73,8 +67,6 @@ Auth.prototype.removeUser = function(username) {
 
 
     User.find({ where: {username: username} }).then(function(user){
-        //var errorEvent = new ErrorEvent();
-        //var authEvent = new AuthEvent();
         //user does not exist - throw error event
 
         console.log(user);
@@ -135,7 +127,6 @@ Auth.prototype.addToGroup = function(user,group) {
     Group.hasMany(User,{foreignKey: 'groupId', through:GroupUser});
 
     var self = this;
-    //var authEvent = new AuthEvent();
 
     //since the relationship of users to groups is defined above, we can now access the `addGroup()` method of the user
     //model
@@ -154,11 +145,8 @@ Auth.prototype.addPermissions = function(groupName,permissionsNames) {
     Permission.hasMany(Group,{foreignKey:'permissionId',through:GroupPermission});
 
     var self = this;
-    //var authEvent = new AuthEvent();
 
     Group.find({name:groupName}).then(function(group){
-
-        //console.log('Found group: '+group)
 
         Permission.findAll({
             where: Sequelize.or({name:permissionsNames})
@@ -167,14 +155,6 @@ Auth.prototype.addPermissions = function(groupName,permissionsNames) {
             group.addPermissions(permissions).then(function(){
                 self.emit(AuthEvent.groupAddedPermissions,AuthEvent.groupAddedPermissions);
             });
-
-            /*for(var i = 0; i < permissions.length; i++){
-                // since the relationship of permissions to groups is defined above, we can now access the `addPermissions()`
-                // method of the permissions model
-                group.addPermissions(permissions[i]);
-            }*/
-
-
         });
     });
 }

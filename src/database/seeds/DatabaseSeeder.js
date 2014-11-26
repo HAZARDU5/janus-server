@@ -28,20 +28,11 @@ function DatabaseSeeder() {
 }
 
 DatabaseSeeder.prototype.run = function() {
-    //database seeding
 
     //deleting groups
 
     log.info('Deleting all groups...');
 
-    /*Group.findAll().then(function(groups){
-
-        for(var i = 0; i < groups.length; i++){
-            groups[i].destroy({force:true}).then(function(){
-                log.info('Deleted group.');
-            });
-        }
-    })*/
     sequelize.query("TRUNCATE TABLE `"+Group.tableName+"`")
     .then(function(){
         log.info('Deleted all groups.');
