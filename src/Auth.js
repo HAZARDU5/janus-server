@@ -16,7 +16,7 @@ var GroupUser = sequelize.import(__dirname+"/models/GroupUser");
 
 
 
-sequelize.sync();
+//sequelize.sync();
 
 function Auth() {
 
@@ -66,23 +66,38 @@ Auth.prototype.addUser = function(username,password,email,groups) {
 
 }
 
+//TODO: remove user from groups before removing user record
 Auth.prototype.removeUser = function(username) {
     var self = this;
+
+
 
     User.find({ where: {username: username} }).then(function(user){
         //var errorEvent = new ErrorEvent();
         //var authEvent = new AuthEvent();
         //user does not exist - throw error event
-        if(user){
+
+        console.log(user);
+
+        if(user == null){
             self.emit(ErrorEvent.userNotExists,ErrorEvent.userNotExists);
         }else{
-            User.destroy().then(function(user){
-                log.info('Deleted user: '+user.username);
 
-                self.emit(AuthEvent.userRemoved,AuthEvent.userRemoved);
+            self.once(AuthEvent.userRemovedAllGroups,function(e){
+
+                log.info(e.message);
+
+                user.destroy().then(function(user){
+                    log.info('Deleted user: '+user.username);
+
+                    self.emit(AuthEvent.userRemoved,AuthEvent.userRemoved);
+                });
             });
-        }
 
+            self.removeFromAllGroups(user);
+
+
+        }
     });
 }
 
@@ -99,6 +114,19 @@ Auth.prototype.resetPassword = function() {
 }
 
 
+
+Auth.prototype.removeFromAllGroups = function(user){
+    User.hasMany(Group,{foreignKey: 'userId', through:GroupUser});
+    Group.hasMany(User,{foreignKey: 'groupId', through:GroupUser});
+
+    var self = this;
+
+    user.setGroups([]).then(function(){
+        self.emit(AuthEvent.userRemovedAllGroups,AuthEvent.userRemovedAllGroups);
+    });
+
+
+}
 
 Auth.prototype.addToGroup = function(user,group) {
     //define relationships of users to groups. Make sure to include the join model

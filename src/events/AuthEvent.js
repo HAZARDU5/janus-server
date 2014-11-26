@@ -13,6 +13,9 @@ var AuthEvent = {
     },
     groupAddedPermissions: {
         message: 'Permissions added to group.'
+    },
+    userRemovedAllGroups: {
+        message: 'Removed user from all groups.'
     }
 }
 
